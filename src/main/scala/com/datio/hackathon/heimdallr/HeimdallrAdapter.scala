@@ -12,6 +12,8 @@ import com.datio.heimdallr.api.common.HttpRequestAdapter
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
+import akka.http.scaladsl.model.headers.`Tls-Session-Info`
+
 
 class HeimdallrAdapter(request: HttpRequest)(implicit materializer: Materializer) extends HttpRequestAdapter {
 
@@ -23,7 +25,12 @@ class HeimdallrAdapter(request: HttpRequest)(implicit materializer: Materializer
 
   override def getOrigin: String = null
 
-  override def getPeerCertificate: X509Certificate = null
+  override def getPeerCertificate: X509Certificate =
+    request.header[`Tls-Session-Info`]
+      .flatMap(sslSession => Option(sslSession.getSession().getPeerCertificates))
+      .filter(_.isInstanceOf[Array[X509Certificate]])
+      .flatMap(certs => if (certs.length > 0) Some(certs(0).asInstanceOf[X509Certificate]) else None)
+      .orNull
 
   override def getPath: String = request.getUri().getPathString
 
