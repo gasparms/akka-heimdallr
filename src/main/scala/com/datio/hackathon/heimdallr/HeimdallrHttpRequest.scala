@@ -2,15 +2,15 @@ package com.datio.hackathon.heimdallr
 
 import java.security.cert.X509Certificate
 
-import akka.http.scaladsl.model.{HttpHeader, HttpMethods, HttpRequest}
 import akka.http.scaladsl.model.headers.{RawHeader, `Tls-Session-Info`}
+import akka.http.scaladsl.model.{HttpHeader, HttpMethods, HttpRequest}
 import akka.http.scaladsl.unmarshalling.Unmarshal
 import akka.stream.ActorMaterializer
 import com.datio.heimdallr.api.common.{HttpMethod, HttpRequestAdapter}
 
+import scala.collection.JavaConverters._
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import collection.JavaConverters._
 
 object HeimdallrHttpRequest {
 
@@ -44,6 +44,7 @@ object HeimdallrHttpRequest {
   */
 class HeimdallrHttpRequest(request: HttpRequest)
                           (implicit materializer: ActorMaterializer) extends HttpRequestAdapter {
+
   import HeimdallrHttpRequest._
 
   implicit val timeout: FiniteDuration = 300.millis
